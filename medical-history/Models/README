@@ -1,0 +1,67 @@
+# Medical History API
+
+## Overview
+
+This is a simple **microservice** built with **ASP.NET Core 6.0** for managing **medical records** of pets. It provides RESTful endpoints to store, retrieve, and manage medical records, as well as information about pets and their owners. The API is designed to be used in a system that helps manage veterinary records for different pets.
+
+## Features
+
+- **RESTful API**: Provides endpoints to manage medical records and pets.
+- **CORS**: Cross-Origin Resource Sharing (CORS) is enabled to allow requests from different domains, facilitating communication with front-end applications.
+- **Swagger UI**: Provides an interactive API documentation and testing interface.
+- **JWT Authentication**: Protects endpoints by verifying JWT tokens for user authentication.
+- **Database Context**: Supports `PetDbContext` and `MedicalDbContext` for storing pet and medical record data.
+- **Docker Support**: Fully dockerized application for easy deployment.
+- **Simple and Scalable**: The architecture allows for easy extension with additional services or features.
+
+## Tech Stack
+
+- **Language**: C# (C-Sharp)
+- **Framework**: ASP.NET Core 6.0
+- **Architecture Style**: Microservices (REST API)
+- **Database**: Can integrate with SQL Server, MySQL, or any database supported by EF Core.
+- **Authentication**: JWT (JSON Web Tokens)
+- **Containerization**: Docker
+- **API Documentation**: Swagger UI for interactive documentation and testing
+
+## Requirements
+
+- .NET 6.0 SDK or higher
+- Docker (for containerization)
+- A running database (e.g., SQL Server or any database of your choice supported by EF Core)
+
+## Installation
+
+### Clone the repository
+
+```bash
+git clone https://github.com/jelizalde04/medical-history-domain.git
+cd medical-history-api
+
+## Build and Run Locally
+Restore dependencies:
+```bash
+dotnet restore
+
+## Run the application:
+
+```bash
+    dotnet run
+
+
+The application will be running on https://localhost:5001 by default.
+
+Docker Setup
+To build and run the application using Docker:
+
+## Build the Docker image:
+
+```bash
+
+docker build -t medical-history-app .
+Run the Docker container:
+
+```bash
+
+docker run -d -p 5001:5001 --name medical-history-container medical-history-app
+This will run the application inside a Docker container, accessible via http://localhost:5001.
