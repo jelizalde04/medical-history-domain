@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace medical_history.Models
+namespace PetMedicalHistoryAPI.Models
 {
     public class Pet
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } 
         public string Name { get; set; }
         public string Species { get; set; }
         public string Breed { get; set; }
@@ -13,7 +13,7 @@ namespace medical_history.Models
         public string Residence { get; set; }
         public string Gender { get; set; }
         public string Color { get; set; }
-        public Guid ResponsibleId { get; set; }
+        public Guid ResponsibleId { get; set; } 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
