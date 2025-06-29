@@ -1,0 +1,49 @@
+services:
+  create-medical:
+    build:
+      context: ./create-medical
+    image: joeli2104/create-medical:latest
+    ports:
+      - "5001:5001"
+    networks:
+      - medical_network
+
+  update-medical:
+    build:
+      context: ./update-medical
+    image: joeli2104/update-medical:latest
+    ports:
+      - "5002:5002"
+    networks:
+      - medical_network
+
+  latest-medical:
+    build:
+      context: ./latest-medical
+    image: joeli2104/latest-medical:latest
+    ports:
+      - "5004:5004"
+    networks:
+      - medical_network
+
+  all-medical:
+    build:
+      context: ./all-medical
+    image: joeli2104/all-medical:latest
+    ports:
+      - "5003:5003"
+    networks:
+      - medical_network
+
+  delete-medical:
+    build:
+      context: ./delete-medical
+    image: joeli2104/delete-medical:latest
+    ports:
+      - "5005:5005"
+    networks:
+      - medical_network
+
+networks:
+  medical_network:
+    driver: bridge
