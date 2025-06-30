@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   all-medical:
     build:
@@ -6,7 +8,7 @@ services:
     ports:
       - "5003:5003"
     env_file:
-      - ./all-medical/.env
+      - ./all-medical/all-medical/.env
 
   create-medical:
     build:
@@ -15,7 +17,7 @@ services:
     ports:
       - "5001:5001"
     env_file:
-      - ./create-medical/.env
+      - ./create-medical/create-medical/.env
 
   delete-medical:
     build:
@@ -24,7 +26,7 @@ services:
     ports:
       - "5005:5005"
     env_file:
-      - ./delete-medical/.env
+      - ./delete-medical/delete-medical/.env
 
   latest-medical:
     build:
@@ -33,7 +35,7 @@ services:
     ports:
       - "5004:5004"
     env_file:
-      - ./latest-medical/.env
+      - ./latest-medical/latest-medical/.env
 
   update-medical:
     build:
@@ -42,4 +44,4 @@ services:
     ports:
       - "5002:5002"
     env_file:
-      - ./update-medical/.env
+      - ./update-medical/update-medical/.env

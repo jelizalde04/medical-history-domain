@@ -3,7 +3,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY *.csproj ./
-COPY nuget.config ./
 RUN dotnet restore
 
 COPY . ./
@@ -22,9 +21,9 @@ RUN chown -R appuser /app
 
 USER appuser
 
-EXPOSE 5003
+EXPOSE 5002
 
-ENV ASPNETCORE_URLS=http://+:5003
+ENV ASPNETCORE_URLS=http://+:5002
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-ENTRYPOINT ["dotnet", "all-medical.dll"]
+ENTRYPOINT ["dotnet", "update-medical.dll"]
