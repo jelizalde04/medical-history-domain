@@ -1,30 +1,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-WORKDIR /src
-
-COPY *.csproj ./
-COPY nuget.config ./
-RUN dotnet restore
-
-COPY . ./
-
-RUN dotnet publish -c Release -o /app/publish --no-restore
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-
-RUN adduser --disabled-password --gecos "" appuser
-
 WORKDIR /app
 
-COPY --from=build /app/publish ./
+COPY . ./
+WORKDIR /app/all-medical
+RUN dotnet publish -c Release -o out
 
-RUN chown -R appuser /app
-
-USER appuser
-
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build /app/all-medical/out ./
 EXPOSE 5003
-
 ENV ASPNETCORE_URLS=http://+:5003
-ENV ASPNETCORE_ENVIRONMENT=Production
-
 ENTRYPOINT ["dotnet", "all-medical.dll"]
