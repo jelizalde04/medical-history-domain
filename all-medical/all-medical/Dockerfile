@@ -1,13 +1,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
-
-COPY . ./
-WORKDIR /app/all-medical
-RUN dotnet publish -c Release -o out
+WORKDIR /src
+COPY . .
+RUN dotnet publish all-medical.csproj -c Release -o /app/out
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app/all-medical/out ./
+COPY --from=build /app/out ./
 EXPOSE 5003
 ENV ASPNETCORE_URLS=http://+:5003
 ENTRYPOINT ["dotnet", "all-medical.dll"]
