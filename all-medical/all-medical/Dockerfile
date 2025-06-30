@@ -28,11 +28,11 @@ RUN adduser --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
 
 # Expose the port the app runs on
-EXPOSE 5001
+EXPOSE 5003
 
 # Set environment variables
-ENV ASPNETCORE_URLS=http://+:5004
+ENV ASPNETCORE_URLS=http://+:5003
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Define the entry point
-ENTRYPOINT ["dotnet", "latest-medical.dll"]
+ENTRYPOINT ["dotnet", "all-medical.dll"]
