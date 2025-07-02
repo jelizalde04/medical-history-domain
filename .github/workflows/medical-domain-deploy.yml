@@ -1,0 +1,507 @@
+name: CI/CD Medical Microservices
+
+on:
+  push:
+    branches: [test, main]
+    paths:
+      - 'create-medical/**'
+      - 'update-medical/**'
+      - 'get-medical-by-id/**'
+      - 'get-all-medicals/**'
+      - 'delete-medical/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'create-medical/**'
+      - 'update-medical/**'
+      - 'get-medical-by-id/**'
+      - 'get-all-medicals/**'
+      - 'delete-medical/**'
+      - '.github/workflows/**'
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      create_medical: ${{ steps.filter.outputs.create_medical }}
+      update_medical: ${{ steps.filter.outputs.update_medical }}
+      get_medical_by_id: ${{ steps.filter.outputs.get_medical_by_id }}
+      get_all_medicals: ${{ steps.filter.outputs.get_all_medicals }}
+      delete_medical: ${{ steps.filter.outputs.delete_medical }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            create_medical:
+              - 'create-medical/**'
+            update_medical:
+              - 'update-medical/**'
+            get_medical_by_id:
+              - 'get-medical-by-id/**'
+            get_all_medicals:
+              - 'get-all-medicals/**'
+            delete_medical:
+              - 'delete-medical/**'
+
+  # -------------------- CREATE-MEDICAL --------------------
+  test_create_medical:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.create_medical == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Give permission and run static tests
+        working-directory: ./create-medical
+        run: |
+          chmod +x Tests/staticTests.sh
+          ./Tests/staticTests.sh
+
+  build_and_push_create_medical:
+    needs: test_create_medical
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.create_medical == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build create-medical image
+        working-directory: ./create-medical
+        run: docker build -t ${{ env.DOCKERHUB_USERNAME }}/create-medical:latest .
+      - name: Login to DockerHub
+        run: echo "${{ env.DOCKERHUB_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+      - name: Push create-medical image
+        run: docker push ${{ env.DOCKERHUB_USERNAME }}/create-medical:latest
+
+  deploy_create_medical_test:
+    needs: build_and_push_create_medical
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.create_medical == 'true' && github.ref == 'refs/heads/test'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy create-medical to EC2 TEST
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_TEST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cat <<EOF > /home/ubuntu/create-medical.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/create-medical:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/create-medical:latest
+            docker stop create-medical || true && docker rm create-medical || true
+            docker run -d --name create-medical \
+              --env-file /home/ubuntu/create-medical.env \
+              -p 4001:4001 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/create-medical:latest
+
+  deploy_create_medical_prod:
+    needs: build_and_push_create_medical
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.create_medical == 'true' && (github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main'))
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy create-medical to EC2 PROD
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_PROD }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY_PROD }}
+          script: |
+            cat <<EOF > /home/ubuntu/create-medical.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/create-medical:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/create-medical:latest
+            docker stop create-medical || true && docker rm create-medical || true
+            docker run -d --name create-medical \
+              --env-file /home/ubuntu/create-medical.env \
+              -p 4001:4001 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/create-medical:latest
+        
+  # -------------------- UPDATE-MEDICAL --------------------
+  test_update_medical:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.update_medical == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Give permission and run static tests
+        working-directory: ./update-medical
+        run: |
+          chmod +x Tests/staticTests.sh
+          ./Tests/staticTests.sh
+
+  build_and_push_update_medical:
+    needs: test_update_medical
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.update_medical == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build update-medical image
+        working-directory: ./update-medical
+        run: docker build -t ${{ env.DOCKERHUB_USERNAME }}/update-medical:latest .
+      - name: Login to DockerHub
+        run: echo "${{ env.DOCKERHUB_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+      - name: Push update-medical image
+        run: docker push ${{ env.DOCKERHUB_USERNAME }}/update-medical:latest
+
+  deploy_update_medical_test:
+    needs: build_and_push_update_medical
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.update_medical == 'true' && github.ref == 'refs/heads/test'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy update-medical to EC2 TEST
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_TEST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cat <<EOF > /home/ubuntu/update-medical.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/update-medical:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/update-medical:latest
+            docker stop update-medical || true && docker rm update-medical || true
+            docker run -d --name update-medical \
+              --env-file /home/ubuntu/update-medical.env \
+              -p 4002:4002 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/update-medical:latest
+
+  deploy_update_medical_prod:
+    needs: build_and_push_update_medical
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.update_medical == 'true' && (github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main'))
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy update-medical to EC2 PROD
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_PROD }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY_PROD }}
+          script: |
+            cat <<EOF > /home/ubuntu/update-medical.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/update-medical:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/update-medical:latest
+            docker stop update-medical || true && docker rm update-medical || true
+            docker run -d --name update-medical \
+              --env-file /home/ubuntu/update-medical.env \
+              -p 4002:4002 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/update-medical:latest
+
+
+  # -------------------- GET-MEDICAL-BY-ID --------------------
+  test_get_medical_by_id:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.get_medical_by_id == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Give permission and run static tests
+        working-directory: ./get-medical-by-id
+        run: |
+          chmod +x Tests/staticTests.sh
+          ./Tests/staticTests.sh
+
+  build_and_push_get_medical_by_id:
+    needs: test_get_medical_by_id
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.get_medical_by_id == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build get-medical-by-id image
+        working-directory: ./get-medical-by-id
+        run: docker build -t ${{ env.DOCKERHUB_USERNAME }}/get-medical-by-id:latest .
+      - name: Login to DockerHub
+        run: echo "${{ env.DOCKERHUB_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+      - name: Push get-medical-by-id image
+        run: docker push ${{ env.DOCKERHUB_USERNAME }}/get-medical-by-id:latest
+
+  deploy_get_medical_by_id_test:
+    needs: build_and_push_get_medical_by_id
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.get_medical_by_id == 'true' && github.ref == 'refs/heads/test'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy get-medical-by-id to EC2 TEST
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_TEST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cat <<EOF > /home/ubuntu/get-medical-by-id.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/get-medical-by-id:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/get-medical-by-id:latest
+            docker stop get-medical-by-id || true && docker rm get-medical-by-id || true
+            docker run -d --name get-medical-by-id \
+              --env-file /home/ubuntu/get-medical-by-id.env \
+              -p 4003:4003 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/get-medical-by-id:latest
+
+  deploy_get_medical_by_id_prod:
+    needs: build_and_push_get_medical_by_id
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.get_medical_by_id == 'true' && (github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main'))
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy get-medical-by-id to EC2 PROD
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_PROD }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY_PROD }}
+          script: |
+            cat <<EOF > /home/ubuntu/get-medical-by-id.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/get-medical-by-id:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/get-medical-by-id:latest
+            docker stop get-medical-by-id || true && docker rm get-medical-by-id || true
+            docker run -d --name get-medical-by-id \
+              --env-file /home/ubuntu/get-medical-by-id.env \
+              -p 4003:4003 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/get-medical-by-id:latest
+
+  # -------------------- GET-ALL-MEDICALS --------------------
+  test_get_all_medicals:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.get_all_medicals == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Give permission and run static tests
+        working-directory: ./get-all-medicals
+        run: |
+          chmod +x Tests/staticTests.sh
+          ./Tests/staticTests.sh
+
+  build_and_push_get_all_medicals:
+    needs: test_get_all_medicals
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.get_all_medicals == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build get-all-medicals image
+        working-directory: ./get-all-medicals
+        run: docker build -t ${{ env.DOCKERHUB_USERNAME }}/get-all-medicals:latest .
+      - name: Login to DockerHub
+        run: echo "${{ env.DOCKERHUB_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+      - name: Push get-all-medicals image
+        run: docker push ${{ env.DOCKERHUB_USERNAME }}/get-all-medicals:latest
+
+  deploy_get_all_medicals_test:
+    needs: build_and_push_get_all_medicals
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.get_all_medicals == 'true' && github.ref == 'refs/heads/test'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy get-all-medicals to EC2 TEST
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_TEST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cat <<EOF > /home/ubuntu/get-all-medicals.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/get-all-medicals:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/get-all-medicals:latest
+            docker stop get-all-medicals || true && docker rm get-all-medicals || true
+            docker run -d --name get-all-medicals \
+              --env-file /home/ubuntu/get-all-medicals.env \
+              -p 4004:4004 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/get-all-medicals:latest
+
+  deploy_get_all_medicals_prod:
+    needs: build_and_push_get_all_medicals
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.get_all_medicals == 'true' && (github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main'))
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy get-all-medicals to EC2 PROD
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_PROD }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY_PROD }}
+          script: |
+            cat <<EOF > /home/ubuntu/get-all-medicals.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/get-all-medicals:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/get-all-medicals:latest
+            docker stop get-all-medicals || true && docker rm get-all-medicals || true
+            docker run -d --name get-all-medicals \
+              --env-file /home/ubuntu/get-all-medicals.env \
+              -p 4004:4004 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/get-all-medicals:latest
+
+  # -------------------- DELETE-MEDICAL --------------------
+  test_delete_medical:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.delete_medical == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Give permission and run static tests
+        working-directory: ./delete-medical
+        run: |
+          chmod +x Tests/staticTests.sh
+          ./Tests/staticTests.sh
+
+  build_and_push_delete_medical:
+    needs: test_delete_medical
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.delete_medical == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build delete-medical image
+        working-directory: ./delete-medical
+        run: docker build -t ${{ env.DOCKERHUB_USERNAME }}/delete-medical:latest .
+      - name: Login to DockerHub
+        run: echo "${{ env.DOCKERHUB_TOKEN }}" | docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+      - name: Push delete-medical image
+        run: docker push ${{ env.DOCKERHUB_USERNAME }}/delete-medical:latest
+
+  deploy_delete_medical_test:
+    needs: build_and_push_delete_medical
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.delete_medical == 'true' && github.ref == 'refs/heads/test'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy delete-medical to EC2 TEST
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_TEST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cat <<EOF > /home/ubuntu/delete-medical.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/delete-medical:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/delete-medical:latest
+            docker stop delete-medical || true && docker rm delete-medical || true
+            docker run -d --name delete-medical \
+              --env-file /home/ubuntu/delete-medical.env \
+              -p 4005:4005 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/delete-medical:latest
+
+  deploy_delete_medical_prod:
+    needs: build_and_push_delete_medical
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.delete_medical == 'true' && (github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main'))
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy delete-medical to EC2 PROD
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_MEDICAL_DOMAIN_PROD }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY_PROD }}
+          script: |
+            cat <<EOF > /home/ubuntu/delete-medical.env
+            DB_HOST=${{ secrets.B_HOST }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PET_DB_NAME=${{ secrets.PET_DB_NAME }}
+            MEDICAL_DB_NAME=${{ secrets.MEDICAL_DB_NAME }}
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/delete-medical:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/delete-medical:latest
+            docker stop delete-medical || true && docker rm delete-medical || true
+            docker run -d --name delete-medical \
+              --env-file /home/ubuntu/delete-medical.env \
+              -p 4005:4005 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/delete-medical:latest
