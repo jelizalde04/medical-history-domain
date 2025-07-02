@@ -116,16 +116,12 @@ namespace PetMedicalHistoryAPI
 
             var app = builder.Build();
 
-            // Middleware Configuration
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
+            app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetMedicalHistoryAPI v1");
                     c.RoutePrefix = "api-docs-updateMedical";
                 });
-            }
 
             app.UseRouting();
 

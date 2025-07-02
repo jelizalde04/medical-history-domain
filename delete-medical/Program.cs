@@ -103,15 +103,12 @@ namespace delete_medical
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
+            app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetMedicalHistoryAPI v1");
                     c.RoutePrefix = "api-docs-deleteMedical";
                 });
-            }
 
             app.UseRouting();
 
