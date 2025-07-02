@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PetMedicalHistoryAPI.Data;
-using PetMedicalHistoryAPI.Models;
+using get_all_medical.Data;
+using get_all_medical.Models;
+using System.Collections.Generic;
 
-namespace PetMedicalHistoryAPI.Controllers
+namespace get_all_medical.Controllers
 {
     [Route("medical")]
     [ApiController]
@@ -67,4 +68,12 @@ namespace PetMedicalHistoryAPI.Controllers
             return Ok(records);
         }
     }
+}
+
+public class PetMedicalContext : DbContext
+{
+    public PetMedicalContext(DbContextOptions<PetMedicalContext> options) : base(options) { }
+
+    public DbSet<Pet> Pets { get; set; }
+    public DbSet<MedicalRecord> MedicalRecords { get; set; }
 }

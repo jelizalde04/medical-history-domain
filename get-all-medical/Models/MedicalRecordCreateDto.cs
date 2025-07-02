@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PetMedicalHistoryAPI.Models
+namespace get_all_medical.Models
 {
     public class MedicalRecordCreateDto
     {

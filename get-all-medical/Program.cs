@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using PetMedicalHistoryAPI.Data;
+using get_all_medical.Data;
 using DotNetEnv;
 using System.Text;
 
-namespace PetMedicalHistoryAPI
+namespace get_all_medical
 {
     public class Program
     {
@@ -108,7 +108,7 @@ namespace PetMedicalHistoryAPI
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetMedicalHistoryAPI v1");
-                    c.RoutePrefix = "api-docs-medicalAll";
+                    c.RoutePrefix = "api-docs-getAllMedical";
                 });
             }
 
@@ -120,6 +120,8 @@ namespace PetMedicalHistoryAPI
             app.UseCors();
 
             app.MapControllers();
+
+            app.MapGet("/health", () => Results.Ok("Healthy"));
 
             app.Run();
         }
