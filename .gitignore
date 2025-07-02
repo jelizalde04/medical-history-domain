@@ -7,7 +7,7 @@ out/
 .vs/
 *.user
 *.suo
-.env
+*.env
 
 appsettings.Development.json
 appsettings.Local.json
@@ -40,7 +40,7 @@ TestResults/
 coverage/
 *.coverage
 *.coveragexml
-*.env
+
 
 .idea/
 *.sln.iml
