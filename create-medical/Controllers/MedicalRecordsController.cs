@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PetMedicalHistoryAPI.Data;
-using PetMedicalHistoryAPI.Models;
-using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System;
+using create_medical.Data;
+using create_medical.Models;
 
-namespace PetMedicalHistoryAPI.Controllers
+namespace create_medical.Controllers
 {
     [Route("medical/create")]
     [ApiController]

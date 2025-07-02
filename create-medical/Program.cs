@@ -1,13 +1,15 @@
-using Microsoft.EntityFrameworkCore;
+using create_medical.Data;
+using create_medical.Models;
+
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using PetMedicalHistoryAPI.Data;
-using PetMedicalHistoryAPI.Models;
-using DotNetEnv;
 using System.Text;
 
-namespace PetMedicalHistoryAPI
+namespace create_medical
+
 {
     public class Program
     {
@@ -23,11 +25,11 @@ namespace PetMedicalHistoryAPI
             var dbUser = Environment.GetEnvironmentVariable("DB_USER");
             var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
             var dbPort = Environment.GetEnvironmentVariable("DB_PORT");
-            var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException("JWT_SECRET no está definido en el entorno.");
+            var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException("JWT_SECRET no estï¿½ definido en el entorno.");
 
             // Get the database names from the environment
-            var petDbName = Environment.GetEnvironmentVariable("PET_DB_NAME") ?? throw new InvalidOperationException("PET_DB_NAME no está definido en el entorno.");
-            var medicalDbName = Environment.GetEnvironmentVariable("MEDICAL_DB_NAME") ?? throw new InvalidOperationException("MEDICAL_DB_NAME no está definido en el entorno.");
+            var petDbName = Environment.GetEnvironmentVariable("PET_DB_NAME") ?? throw new InvalidOperationException("PET_DB_NAME no estï¿½ definido en el entorno.");
+            var medicalDbName = Environment.GetEnvironmentVariable("MEDICAL_DB_NAME") ?? throw new InvalidOperationException("MEDICAL_DB_NAME no estï¿½ definido en el entorno.");
 
             // connecting to the medical database
             string medicalConnectionString = $"Host={dbHost};Port={dbPort};Username={dbUser};Password={dbPassword};Database={medicalDbName};";
@@ -123,7 +125,7 @@ namespace PetMedicalHistoryAPI
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetMedicalHistoryAPI v1");
-                    c.RoutePrefix = "api-docs-medical";
+                    c.RoutePrefix = "api-docs-createMedical";
                 });
             }
 
@@ -135,6 +137,7 @@ namespace PetMedicalHistoryAPI
             app.UseCors();
 
             app.MapControllers();
+            app.MapGet("/health", () => Results.Ok("Healthy"));
 
             app.Run();
         }

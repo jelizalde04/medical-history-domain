@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PetMedicalHistoryAPI.Models
+namespace create_medical.Models
 {
     [Table("MedicalRecord")]
     public class MedicalRecord

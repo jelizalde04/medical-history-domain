@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PetMedicalHistoryAPI.Models;
+using create_medical.Models;
 
-namespace PetMedicalHistoryAPI.Data
+namespace create_medical.Data
 {
     public class PetContext : DbContext
     {
-        public PetContext(DbContextOptions<PetContext> options) : base(options)
-        {
-        }
+        public PetContext(DbContextOptions<PetContext> options) : base(options) { }
+
 
         public DbSet<Pet> Pets { get; set; }
 
