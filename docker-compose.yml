@@ -1,45 +1,81 @@
+
 services:
-  latest-medical:
-    build:
-      context: ./latest-medical/latest-medical
-    image: ${DOCKERHUB_USERNAME}/latest-medical:latest
-    ports:
-      - "5004:5004"
-    env_file:
-      - ./latest-medical/.env
-
-  update-medical:
-    build:
-      context: ./update-medical/update-medical
-    image: ${DOCKERHUB_USERNAME}/update-medical:latest
-    ports:
-      - "5002:5002"
-    env_file:
-      - ./update-medical/.env
-
-  all-medical:
-    build:
-      context: ./all-medical/all-medical
-    image: ${DOCKERHUB_USERNAME}/all-medical:latest
-    ports:
-      - "5003:5003"
-    env_file:
-      - ./all-medical/.env
-
   create-medical:
     build:
-      context: ./create-medical/create-medical
-    image: ${DOCKERHUB_USERNAME}/create-medical:latest
+      context: ./create-medical
+      dockerfile: Dockerfile
+    container_name: create-medical
     ports:
       - "5001:5001"
-    env_file:
-      - ./create-medical/.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
 
   delete-medical:
     build:
-      context: ./delete-medical/delete-medical
-    image: ${DOCKERHUB_USERNAME}/delete-medical:latest
+      context: ./delete-medical
+      dockerfile: Dockerfile
+    container_name: delete-medical
     ports:
       - "5005:5005"
-    env_file:
-      - ./delete-medical/.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  get-all-medical:
+    build:
+      context: ./get-all-medical
+      dockerfile: Dockerfile
+    container_name: get-all-medical
+    ports:
+      - "5004:5004"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  latest-medical:
+    build:
+      context: ./latest-medical
+      dockerfile: Dockerfile
+    container_name: latest-medical
+    ports:
+      - "5003:5003"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  update-medical:
+    build:
+      context: ./update-medical
+      dockerfile: Dockerfile
+    container_name: update-medical
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
