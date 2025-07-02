@@ -1,0 +1,161 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+.gitmodules
+
+# Documentation
+README.md
+readme.md
+*.md
+docs/
+documentation/
+
+# Build artifacts and binaries
+bin/
+obj/
+out/
+dist/
+build/
+target/
+
+# IDE and editor files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.swp
+*.swo
+*~
+
+# Visual Studio temporary files
+*.tmp
+*.log
+*.tlog
+*.cache
+
+# Package manager files
+packages/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment and configuration files (sensitive data)
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+*.env
+
+# Test files and coverage reports
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# Temporary ASP.NET files
+App_Data/
+*.mdf
+*.ldf
+
+# NuGet packages (restored during build)
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+# Visual Studio cache files
+*.cache
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# ReSharper files
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# TeamCity build artifacts
+_TeamCity*
+
+# NCrunch files
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# Azure Functions artifacts
+bin
+obj
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Docker files (to avoid recursion)
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# CI/CD files
+.github/
+.gitlab-ci.yml
+azure-pipelines.yml
+Jenkinsfile
+
+# Configuration files that might contain secrets
+appsettings.Production.json
+appsettings.Staging.json
+launchSettings.json
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# HTTP request files
+*.http
+*.rest
+
+# JetBrains Rider
+.idea/
+*.sln.iml

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PetMedicalHistoryAPI.Models
+namespace latest_medical.Models
 {
     public class Pet
     {
