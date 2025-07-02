@@ -106,7 +106,7 @@ jobs:
             docker stop create-medical || true && docker rm create-medical || true
             docker run -d --name create-medical \
               --env-file /home/ubuntu/create-medical.env \
-              -p 4001:4001 \
+              -p 5001:5001 \
               ${{ secrets.DOCKERHUB_USERNAME }}/create-medical:latest
 
   deploy_create_medical_prod:
@@ -138,7 +138,7 @@ jobs:
             docker stop create-medical || true && docker rm create-medical || true
             docker run -d --name create-medical \
               --env-file /home/ubuntu/create-medical.env \
-              -p 4001:4001 \
+              -p 5001:5001 \
               ${{ secrets.DOCKERHUB_USERNAME }}/create-medical:latest
         
   # -------------------- UPDATE-MEDICAL --------------------
@@ -197,7 +197,7 @@ jobs:
             docker stop update-medical || true && docker rm update-medical || true
             docker run -d --name update-medical \
               --env-file /home/ubuntu/update-medical.env \
-              -p 4002:4002 \
+              -p 5002:5002 \
               ${{ secrets.DOCKERHUB_USERNAME }}/update-medical:latest
 
   deploy_update_medical_prod:
@@ -229,7 +229,7 @@ jobs:
             docker stop update-medical || true && docker rm update-medical || true
             docker run -d --name update-medical \
               --env-file /home/ubuntu/update-medical.env \
-              -p 4002:4002 \
+              -p 5002:5002 \
               ${{ secrets.DOCKERHUB_USERNAME }}/update-medical:latest
 
 
@@ -289,7 +289,7 @@ jobs:
             docker stop latest-medical || true && docker rm latest-medical || true
             docker run -d --name latest-medical \
               --env-file /home/ubuntu/latest-medical.env \
-              -p 4003:4003 \
+              -p 5003:5003 \
               ${{ secrets.DOCKERHUB_USERNAME }}/latest-medical:latest
 
   deploy_latest_medical_prod:
@@ -321,7 +321,7 @@ jobs:
             docker stop latest-medical || true && docker rm latest-medical || true
             docker run -d --name latest-medical \
               --env-file /home/ubuntu/latest-medical.env \
-              -p 4003:4003 \
+              -p 5003:5003 \
               ${{ secrets.DOCKERHUB_USERNAME }}/latest-medical:latest
 
   # -------------------- get-all-medical --------------------
@@ -380,7 +380,7 @@ jobs:
             docker stop get-all-medical || true && docker rm get-all-medical || true
             docker run -d --name get-all-medical \
               --env-file /home/ubuntu/get-all-medical.env \
-              -p 4004:4004 \
+              -p 5004:5004 \
               ${{ secrets.DOCKERHUB_USERNAME }}/get-all-medical:latest
 
   deploy_get_all_medical_prod:
@@ -412,7 +412,7 @@ jobs:
             docker stop get-all-medical || true && docker rm get-all-medical || true
             docker run -d --name get-all-medical \
               --env-file /home/ubuntu/get-all-medical.env \
-              -p 4004:4004 \
+              -p 5004:5004 \
               ${{ secrets.DOCKERHUB_USERNAME }}/get-all-medical:latest
 
   # -------------------- DELETE-MEDICAL --------------------
@@ -471,7 +471,7 @@ jobs:
             docker stop delete-medical || true && docker rm delete-medical || true
             docker run -d --name delete-medical \
               --env-file /home/ubuntu/delete-medical.env \
-              -p 4005:4005 \
+              -p 5005:5005 \
               ${{ secrets.DOCKERHUB_USERNAME }}/delete-medical:latest
 
   deploy_delete_medical_prod:
@@ -503,5 +503,5 @@ jobs:
             docker stop delete-medical || true && docker rm delete-medical || true
             docker run -d --name delete-medical \
               --env-file /home/ubuntu/delete-medical.env \
-              -p 4005:4005 \
+              -p 5005:5005 \
               ${{ secrets.DOCKERHUB_USERNAME }}/delete-medical:latest
