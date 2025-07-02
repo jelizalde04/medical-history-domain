@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PetMedicalHistoryAPI.Models;
+using delete_medical.Models;
 
-namespace PetMedicalHistoryAPI.Data
+namespace delete_medical.Data
 {
     public class PetContext : DbContext
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PetMedicalHistoryAPI.Models
+namespace delete_medical.Models
 {
     public class Pet
     {

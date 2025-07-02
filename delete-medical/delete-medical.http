@@ -1,0 +1,6 @@
+@delete_medical_HostAddress = http://localhost:5077
+
+GET {{delete_medical_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
