@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:34270",
+      "applicationUrl": "http://localhost:5002",
       "sslPort": 0
     }
   },
@@ -22,7 +22,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api-docs-medical",
+      "launchUrl": "api-docs-updateMedical",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

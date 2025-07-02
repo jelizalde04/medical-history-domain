@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PetMedicalHistoryAPI.Models
+namespace update_medical.Models
 {
     public class MedicalRecordUpdateDto
     {

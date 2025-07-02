@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using PetMedicalHistoryAPI.Data;
-using PetMedicalHistoryAPI.Models;
-using Microsoft.AspNetCore.Authorization;
+using update_medical.Data;
+using update_medical.Models;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System;
+using Microsoft.AspNetCore.Mvc;
 
-namespace PetMedicalHistoryAPI.Controllers
+namespace update_medical.Controllers
 {
     [Route("medical")]
     [ApiController]
