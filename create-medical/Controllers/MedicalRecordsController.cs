@@ -49,7 +49,7 @@ namespace create_medical.Controllers
             {
                 Id = Guid.NewGuid(),
                 PetId = dto.PetId,
-                LastVisitDate = dto.LastVisitDate,
+                LastVisitDate = DateTime.SpecifyKind(dto.LastVisitDate, DateTimeKind.Utc),
                 Weight = dto.Weight,
                 HealthStatus = dto.HealthStatus,
                 Diseases = dto.Diseases,
