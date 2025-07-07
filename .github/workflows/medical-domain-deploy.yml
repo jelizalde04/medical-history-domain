@@ -91,7 +91,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cat <<EOF > /home/ubuntu/create-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
@@ -123,7 +123,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY_PROD }}
           script: |
             cat <<EOF > /home/ubuntu/create-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
@@ -182,7 +182,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cat <<EOF > /home/ubuntu/update-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
@@ -214,7 +214,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY_PROD }}
           script: |
             cat <<EOF > /home/ubuntu/update-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
@@ -274,7 +274,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cat <<EOF > /home/ubuntu/latest-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
@@ -306,7 +306,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY_PROD }}
           script: |
             cat <<EOF > /home/ubuntu/latest-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
@@ -365,7 +365,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cat <<EOF > /home/ubuntu/get-all-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
@@ -397,7 +397,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY_PROD }}
           script: |
             cat <<EOF > /home/ubuntu/get-all-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
@@ -456,7 +456,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cat <<EOF > /home/ubuntu/delete-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
@@ -488,7 +488,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY_PROD }}
           script: |
             cat <<EOF > /home/ubuntu/delete-medical.env
-            DB_HOST=${{ secrets.B_HOST }}
+            DB_HOST=${{ secrets.DB_HOST }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_PORT=${{ secrets.DB_PORT }}
