@@ -167,4 +167,3 @@ $headers = @{
 
 Invoke-RestMethod -Uri "http://localhost:5005/medical/123e4567-e89b-12d3-a456-426614174000" -Method DELETE -Headers $headers
 ```
-
