@@ -348,7 +348,6 @@ create-medical/
 ├── .env
 └── create-medical.csproj
 ```
-
 ---
 
 ## 11. License

@@ -13,6 +13,7 @@ The **Update Medical Record Microservice** handles updating existing medical rec
 - RESTful API design
 - Swagger documentation
 
+
 ### Integration with Other Services
 This microservice integrates with:
 - **Pet Management Service**: Validates pet existence and ownership
