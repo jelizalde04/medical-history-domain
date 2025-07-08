@@ -24,10 +24,10 @@ namespace update_medical.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateMedicalRecord([FromBody] MedicalRecordUpdateDto dto)
         {
-            // Validar token JWT
+            // Validate JWT token
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             if (string.IsNullOrEmpty(token))
-                return Unauthorized("Token no proporcionado.");
+                return Unauthorized("Token not provided.");
 
             var handler = new JwtSecurityTokenHandler();
             JwtSecurityToken jsonToken;
@@ -37,23 +37,23 @@ namespace update_medical.Controllers
             }
             catch
             {
-                return Unauthorized("Token inválido.");
+                return Unauthorized("Invalid token.");
             }
 
             var responsibleIdString = jsonToken?.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
             if (string.IsNullOrEmpty(responsibleIdString) || !Guid.TryParse(responsibleIdString, out var responsibleId))
             {
-                return Unauthorized("ID del responsable no encontrado o no válido en el token.");
+                return Unauthorized("Invalid userId in token.");
             }
 
-            // Validar mascota y responsable
+            // Validate pet and responsible
             var pet = await _petContext.Pets.FirstOrDefaultAsync(p => p.Id == dto.PetId);
             if (pet == null)
-                return NotFound("Mascota no encontrada.");
+                return NotFound("Pet not found.");
             if (pet.ResponsibleId != responsibleId)
-                return Unauthorized("No autorizado para editar el historial de esta mascota.");
+                return Unauthorized("Not authorized for this pet.");
 
-            // Validar que venga al menos un dato a actualizar
+            // Validate at least one field to update
             if (
                 dto.LastVisitDate == null &&
                 dto.Weight == null &&
@@ -66,10 +66,10 @@ namespace update_medical.Controllers
                 dto.Sterilized == null
             )
             {
-                return BadRequest("Debe proporcionar al menos un dato a actualizar.");
+                return BadRequest("At least one field must be provided.");
             }
 
-            // Buscar el último registro médico por CreatedAt
+            // Find last medical record by CreatedAt
             var lastRecord = await _medicalContext.MedicalRecords
                                 .Where(r => r.PetId == dto.PetId)
                                 .OrderByDescending(r => r.CreatedAt)
@@ -77,7 +77,7 @@ namespace update_medical.Controllers
 
             if (lastRecord == null)
             {
-                // No hay registro previo → creamos uno nuevo con los datos recibidos
+                // No previous record → create new one
                 var newRecord = new MedicalRecord
                 {
                     Id = Guid.NewGuid(),
@@ -103,6 +103,7 @@ namespace update_medical.Controllers
             {
                 var lastVisitDateSafe = DateTime.SpecifyKind(lastRecord.LastVisitDate, DateTimeKind.Utc);
 
+                // Create updated record
                 var updatedRecord = new MedicalRecord
                 {
                     Id = Guid.NewGuid(),
@@ -120,6 +121,23 @@ namespace update_medical.Controllers
                     Sterilized = dto.Sterilized.HasValue ? dto.Sterilized.Value : lastRecord.Sterilized,
                     CreatedAt = DateTime.UtcNow
                 };
+
+                // VALIDATION: Check for duplicate records
+                if (updatedRecord.LastVisitDate.Date == lastVisitDateSafe.Date &&
+                    updatedRecord.Weight == lastRecord.Weight &&
+                    updatedRecord.HealthStatus == lastRecord.HealthStatus &&
+                    updatedRecord.Diseases == lastRecord.Diseases &&
+                    updatedRecord.Treatments == lastRecord.Treatments &&
+                    updatedRecord.Vaccinations == lastRecord.Vaccinations &&
+                    updatedRecord.Allergies == lastRecord.Allergies &&
+                    updatedRecord.SpecialCare == lastRecord.SpecialCare &&
+                    updatedRecord.Sterilized == lastRecord.Sterilized)
+                {
+                    return BadRequest(new { 
+                        message = "Cannot create duplicate record.",
+                        details = "All fields are identical to last record."
+                    });
+                }
 
                 _medicalContext.MedicalRecords.Add(updatedRecord);
                 await _medicalContext.SaveChangesAsync();
