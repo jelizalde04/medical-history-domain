@@ -25,7 +25,7 @@ RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
 USER appuser
 
 # Expose the port that the application listens on
-EXPOSE 8080
+EXPOSE 5001
 
 # Set environment variables
 ENV ASPNETCORE_URLS=http://+:5001
